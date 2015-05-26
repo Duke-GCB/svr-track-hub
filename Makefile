@@ -46,9 +46,15 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
 bed_combined: bed_headlesses $(BED_COMBINED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bed
 
 # The combined .bed file depends on its parts - the headless BED files from each chrom
+#
+# Explanation of steps
+# cat: combine all headless files
+# sort: files must be sorted by chromosome then start index
+# cut: source files are bedGraph format with a 'name' column between 'end' and 'value'
+#   bedGraphToBigWig requires 'chrom', 'start', 'end', 'data', so we cut out 'name'
 $(BED_COMBINED)/%.bed: bed_headlesses
 	$(MKDIR_P) $(BED_COMBINED)
-	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n > $@
+	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n |  cut -d ' ' -f 1-3,5 > $@
 
 # The target to make the headless files, expanded from above patsubst
 bed_headlesses: $(BED_HEADLESSES)
