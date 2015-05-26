@@ -27,10 +27,11 @@ $(CACHE)/hg19.sizes:
 	$(MKDIR_P) $(CACHE)
 	docker run bigbed fetchChromSizes hg19 > "$(CACHE)/hg19.sizes"
 
-bigbed: chrom_sizes $(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bb
+bigbed: \
+	$(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bb
 
-# Master bigbed
-$(DERIVED)/%.bb: $(BED_COMBINED)/%.bed
+# Making a .bb file with bedToBigBed depends on the combined .bed file and the chrom_sizes
+$(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
 	$(MKDIR_P) $(DERIVED)
 	docker run -v $(DATA_ABSPATH):/data \
 	  bigbed \
@@ -41,13 +42,17 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed
 	  /$(CACHE)/hg19.sizes \
 	  /$@
 
-bed_headless: $(BED_HEADLESSES)
-	echo $(BED_HEADLESSES)
+# Intermediate steps for combining
 
-$(BED_COMBINED)/%.bed: bed_headless
+# The combined .bed file depends on its parts - the headless BED files from each chrom
+$(BED_COMBINED)/%.bed: bed_headlesses
 	$(MKDIR_P) $(BED_COMBINED)
 	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n > $@
 
+# The target to make the headless files, expanded from above patsubst
+bed_headlesses: $(BED_HEADLESSES)
+
+# Generic rule to make a headless file - depends on its raw headed file
 $(BED_HEADLESS)/%.bed: $(RAW)/bed/%.bed
 	$(MKDIR_P) $(BED_HEADLESS)
 	tail -n+6 $< > $@
