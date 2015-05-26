@@ -43,6 +43,7 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
 	  /$@
 
 # Intermediate steps for combining
+bed_combined: bed_headlesses $(BED_COMBINED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bed
 
 # The combined .bed file depends on its parts - the headless BED files from each chrom
 $(BED_COMBINED)/%.bed: bed_headlesses

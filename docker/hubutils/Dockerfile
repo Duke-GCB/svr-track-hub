@@ -5,13 +5,13 @@ MAINTAINER Dan Leehr <dan.leehr@duke.edu>
 RUN apt-get update && apt-get install -y \
   wget
 
-RUN mkdir /bigbed
+RUN mkdir /hubutils
 
-WORKDIR /bigbed
+WORKDIR /hubutils
 
 # Fetch tools from hgdownload
-RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed
+RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedGraphToBigWig
 RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/fetchChromSizes
 RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/hubCheck
-RUN chmod +x /bigbed/*
-ENV PATH /bigbed:$PATH
+RUN chmod +x /hubutils/*
+ENV PATH /hubutils:$PATH
