@@ -46,7 +46,7 @@ bed_headless: $(BED_HEADLESSES)
 
 $(BED_COMBINED)/%.bed: bed_headless
 	$(MKDIR_P) $(BED_COMBINED)
-	cat $(BED_HEADLESS)/*.bed > $@
+	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n > $@
 
 $(BED_HEADLESS)/%.bed: $(RAW)/bed/%.bed
 	$(MKDIR_P) $(BED_HEADLESS)
