@@ -3,6 +3,7 @@ MKDIR_P = mkdir -p
 
 # Directory locations
 DATA = data
+DOCKER = docker
 RAW = $(DATA)/raw
 CACHE = $(DATA)/cache
 DERIVED = $(DATA)/derived
@@ -18,7 +19,7 @@ BED_HEADLESSES = $(patsubst data/raw/bed/%.bed, data/derived/headless/%.bed, $(B
 BED_COMBINED = $(DERIVED)/combined
 
 # Targets
-all: bigbed
+all: docker_image
 
 # Fetch chromosome sizes using docker container
 chrom_sizes: $(CACHE)/hg19.sizes
@@ -60,4 +61,26 @@ $(BED_HEADLESS)/%.bed: $(RAW)/bed/%.bed
 clean:
 	rm -rf $(CACHE) $(DERIVED)
 
-# TODO: hubcheck and build distribution dir
+# Location of the template directory to copy
+HUB_SOURCE=$(RAW)/web
+HUB_BUILD=$(DERIVED)/hub
+DOCKERFILE=$(DOCKER)/svr-track-hub-web/Dockerfile
+DOCKERIMAGE=dukegcb/svr-track-hub-web
+
+docker_image: bigbed hub_root
+	cp $(DERIVED)/*.bb $(HUB_BUILD)/hub-root/hg19/
+	cd $(HUB_BUILD) && docker build -t $(DOCKERIMAGE) .
+
+hub_root: $(HUB_BUILD)
+
+$(HUB_BUILD):
+	cp -r $(HUB_SOURCE) $@
+	cp $(DOCKERFILE) $@/
+
+hubcheck:
+	docker run -d -P --name hub $(DOCKERIMAGE); \
+	echo "Checking hub..."; \
+	docker run --link hub:hub bigbed sh -c "hubCheck http://\$$HUB_PORT_80_TCP_ADDR:\$$HUB_PORT_80_TCP_PORT/hub.txt"; \
+	docker kill hub; \
+	docker rm hub; \
+	echo "Done."
