@@ -18,26 +18,24 @@ BED_HEADLESSES = $(patsubst data/raw/bed/%.bed, data/derived/headless/%.bed, $(B
 BED_COMBINED = $(DERIVED)/combined
 
 # Targets
-all: bigbed
+all: bigwig
 
 # Fetch chromosome sizes using docker container
 chrom_sizes: $(CACHE)/hg19.sizes
 
 $(CACHE)/hg19.sizes:
 	$(MKDIR_P) $(CACHE)
-	docker run bigbed fetchChromSizes hg19 > "$(CACHE)/hg19.sizes"
+	docker run hubutils fetchChromSizes hg19 > "$(CACHE)/hg19.sizes"
 
-bigbed: \
-	$(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bb
+bigwig: \
+	$(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bw
 
-# Making a .bb file with bedToBigBed depends on the combined .bed file and the chrom_sizes
-$(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
+# Making a .bw file with bedGraphToBigWig depends on the combined .bed file and the chrom_sizes
+$(DERIVED)/%.bw: $(BED_COMBINED)/%.bed chrom_sizes
 	$(MKDIR_P) $(DERIVED)
 	docker run -v $(DATA_ABSPATH):/data \
-	  bigbed \
-	  bedToBigBed \
-	  -type=bed4+1 \
-	  -as=/$(RAW)/SVR.as \
+	  hubutils \
+	  bedGraphToBigWig \
 	  /$< \
 	  /$(CACHE)/hg19.sizes \
 	  /$@
