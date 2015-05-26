@@ -2,3 +2,4 @@ results
 data/derived
 data/cache
 *.bed
+*.bb
