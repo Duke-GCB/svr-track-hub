@@ -1,0 +1,6 @@
+track E2F1_3merSVR_Schipper2015
+bigDataUrl combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bb
+shortLabel E2F1 sites (SVR)
+longLabel E2F1 binding sites predicted by 3mer SVR model (Schipper et al. 2015)
+type bigBed 5
+visibility pack

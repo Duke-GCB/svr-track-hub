@@ -1,0 +1,6 @@
+hub DukeGCBHub
+shortLabel Duke GCB Hub
+longLabel Duke Center for Genomic and Computational Biology Hub
+genomesFile genomes.txt
+email gcb-contact@duke.edu
+descriptionUrl https://www.genome.duke.edu
