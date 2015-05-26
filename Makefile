@@ -41,9 +41,6 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed
 	  /$(CACHE)/hg19.sizes \
 	  /$@
 
-# Combining headless BED files
-bed_combined: bed_headless $(BED_COMBINED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bed
-
 bed_headless: $(BED_HEADLESSES)
 	echo $(BED_HEADLESSES)
 
