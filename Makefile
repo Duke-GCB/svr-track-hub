@@ -37,7 +37,7 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
 	docker run -v $(DATA_ABSPATH):/data \
 	  bigbed \
 	  bedToBigBed \
-	  -type=bed4+1 \
+	  -type=bed5 \
 	  -as=/$(RAW)/SVR.as \
 	  /$< \
 	  /$(CACHE)/hg19.sizes \
@@ -46,9 +46,10 @@ $(DERIVED)/%.bb: $(BED_COMBINED)/%.bed chrom_sizes
 # Intermediate steps for combining
 
 # The combined .bed file depends on its parts - the headless BED files from each chrom
+# Hack to remove the decimal
 $(BED_COMBINED)/%.bed: bed_headlesses
 	$(MKDIR_P) $(BED_COMBINED)
-	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n > $@
+	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n | cut -d '.' -f 1 > $@
 
 # The target to make the headless files, expanded from above patsubst
 bed_headlesses: $(BED_HEADLESSES)
