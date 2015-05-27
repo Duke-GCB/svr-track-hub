@@ -16,6 +16,7 @@ BED_HEADLESSES = $(patsubst data/raw/bed/%.bed, data/derived/headless/%.bed, $(B
 
 # Combined BED files
 BED_COMBINED = $(DERIVED)/combined
+BED_MERGED = $(DERIVED)/merged
 
 # Targets
 all: bigwig
@@ -31,7 +32,7 @@ bigwig: \
 	$(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bw
 
 # Making a .bw file with bedGraphToBigWig depends on the combined .bed file and the chrom_sizes
-$(DERIVED)/%.bw: $(BED_COMBINED)/%.bed chrom_sizes
+$(DERIVED)/%.bw: $(BED_MERGED)/%.bed chrom_sizes
 	$(MKDIR_P) $(DERIVED)
 	docker run -v $(DATA_ABSPATH):/data \
 	  hubutils \
@@ -43,16 +44,21 @@ $(DERIVED)/%.bw: $(BED_COMBINED)/%.bed chrom_sizes
 # Intermediate steps for combining
 bed_combined: bed_headlesses $(BED_COMBINED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bed
 
+bed_merged: bed_combined $(BED_MERGED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bed
+
 # The combined .bed file depends on its parts - the headless BED files from each chrom
 #
 # Explanation of steps
 # cat: combine all headless files
 # sort: files must be sorted by chromosome then start index
-# cut: source files are bedGraph format with a 'name' column between 'end' and 'value'
-#   bedGraphToBigWig requires 'chrom', 'start', 'end', 'data', so we cut out 'name'
+# tr: bedtools merge requires tab-delimeted files
 $(BED_COMBINED)/%.bed: bed_headlesses
 	$(MKDIR_P) $(BED_COMBINED)
-	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n |  cut -d ' ' -f 1-3,5 > $@
+	cat $(BED_HEADLESS)/*.bed | sort -k1,1 -k2,2n | tr ' ' '\t' > $@
+
+$(BED_MERGED)/%.bed: $(BED_COMBINED)/%.bed
+	$(MKDIR_P) $(BED_MERGED)
+	docker run -v $(DATA_ABSPATH):/data hubutils bedtools merge -scores mean -i /$< > $@
 
 # The target to make the headless files, expanded from above patsubst
 bed_headlesses: $(BED_HEADLESSES)

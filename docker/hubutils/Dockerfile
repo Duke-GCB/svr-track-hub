@@ -3,7 +3,8 @@ MAINTAINER Dan Leehr <dan.leehr@duke.edu>
 
 # fetchChromSizes can use mysql, wget, or FTP
 RUN apt-get update && apt-get install -y \
-  wget
+  wget \
+  bedtools
 
 RUN mkdir /hubutils
 
