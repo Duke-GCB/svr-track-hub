@@ -14,5 +14,7 @@ RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed
 RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/fetchChromSizes
 RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/hubCheck
 RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedToBed
+RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedSummary
+RUN curl -SLO http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigBedInfo
 RUN chmod +x /bigbed/*
 ENV PATH /bigbed:$PATH
