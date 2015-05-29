@@ -5,6 +5,7 @@ MKDIR_P = mkdir -p
 DATA = data
 DOCKER = docker
 RAW = $(DATA)/raw
+RESOURCES = $(DATA)/resources
 CACHE = $(DATA)/cache
 DERIVED = $(DATA)/derived
 
@@ -73,7 +74,7 @@ clean:
 	rm -rf $(CACHE) $(DERIVED)
 
 # Location of the template directory to copy
-HUB_SOURCE=$(RAW)/web
+HUB_SOURCE=$(RESOURCES)/web
 HUB_BUILD=$(DERIVED)/hub
 DOCKERFILE=$(DOCKER)/svr-track-hub-web/Dockerfile
 DOCKERIMAGE=dukegcb/svr-track-hub-web
