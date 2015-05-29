@@ -27,7 +27,7 @@ chrom_sizes: $(CACHE)/hg19.sizes
 
 $(CACHE)/hg19.sizes:
 	$(MKDIR_P) $(CACHE)
-	docker run hubutils fetchChromSizes hg19 > "$(CACHE)/hg19.sizes"
+	docker run dukegcb/hubutils fetchChromSizes hg19 > "$(CACHE)/hg19.sizes"
 
 bigwig: \
 	$(DERIVED)/combined_E2F1_SVR.model_SVRpredict_E2F1_SVR_SVR-scores_browser-track.bw
@@ -36,7 +36,7 @@ bigwig: \
 $(DERIVED)/%.bw: $(BED_MERGED)/%.bed chrom_sizes
 	$(MKDIR_P) $(DERIVED)
 	docker run -v $(DATA_ABSPATH):/data \
-	  hubutils \
+	  dukegcb/hubutils \
 	  bedGraphToBigWig \
 	  /$< \
 	  /$(CACHE)/hg19.sizes \
@@ -59,7 +59,7 @@ $(BED_COMBINED)/%.bed: bed_headlesses
 
 $(BED_MERGED)/%.bed: $(BED_COMBINED)/%.bed
 	$(MKDIR_P) $(BED_MERGED)
-	docker run -v $(DATA_ABSPATH):/data hubutils bedtools merge -scores mean -i /$< > $@
+	docker run -v $(DATA_ABSPATH):/data dukegcb/hubutils bedtools merge -scores mean -i /$< > $@
 
 # The target to make the headless files, expanded from above patsubst
 bed_headlesses: $(BED_HEADLESSES)
@@ -91,7 +91,7 @@ $(HUB_BUILD):
 hubcheck:
 	docker run -d -P --name hub $(DOCKERIMAGE); \
 	echo "Checking hub..."; \
-	docker run --link hub:hub hubutils sh -c "hubCheck http://\$$HUB_PORT_80_TCP_ADDR:\$$HUB_PORT_80_TCP_PORT/hub.txt"; \
+	docker run --link hub:hub dukegcb/hubutils sh -c "hubCheck http://\$$HUB_PORT_80_TCP_ADDR:\$$HUB_PORT_80_TCP_PORT/hub.txt"; \
 	docker kill hub; \
 	docker rm hub; \
 	echo "Done."
