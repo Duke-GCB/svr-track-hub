@@ -4,6 +4,7 @@ MKDIR_P = mkdir -p
 # Directory locations
 DATA = data
 DOCKER = docker
+PRODUCTS = products
 RAW = $(DATA)/raw
 RESOURCES = $(DATA)/resources
 CACHE = $(DATA)/cache
@@ -71,11 +72,11 @@ $(BED_HEADLESS)/%.bed: $(RAW)/bed/%.bed
 	tail -n+6 $< > $@
 
 clean:
-	rm -rf $(CACHE) $(DERIVED)
+	rm -rf $(CACHE) $(DERIVED) $(PRODUCTS)
 
 # Docker image with web server to host the track hub
 HUB_SOURCE=$(RESOURCES)/web
-HUB_BUILD=$(DERIVED)/hub
+HUB_BUILD=$(PRODUCTS)/hub
 DOCKERFILE=$(DOCKER)/svr-track-hub-web/Dockerfile
 DOCKERIMAGE=dukegcb/svr-track-hub-web
 
@@ -86,7 +87,8 @@ docker_image: bigwig hub_root
 hub_root: $(HUB_BUILD)
 
 $(HUB_BUILD):
-	cp -r $(HUB_SOURCE) $@
+	$(MKDIR_P) $@
+	cp -r $(HUB_SOURCE)/ $@
 	cp $(DOCKERFILE) $@/
 
 # Docker image with utilities for working with hub track files
@@ -101,3 +103,6 @@ hubcheck:
 	docker kill hub; \
 	docker rm hub; \
 	echo "Done."
+
+deploy:
+	rsync -a $(HUB_BUILD)/hub-root/ root@$(server):/var/www/html/
