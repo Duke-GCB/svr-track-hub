@@ -79,7 +79,7 @@ DOCKERFILE=$(DOCKER)/svr-track-hub-web/Dockerfile
 DOCKERIMAGE=dukegcb/svr-track-hub-web
 
 docker_image: bigwig hub_root
-	cp $(DERIVED)/*.bb $(HUB_BUILD)/hub-root/hg19/
+	cp $(DERIVED)/*.bw $(HUB_BUILD)/hub-root/hg19/
 	cd $(HUB_BUILD) && docker build -t $(DOCKERIMAGE) .
 
 hub_root: $(HUB_BUILD)
