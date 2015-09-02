@@ -1,7 +1,7 @@
 svr-track-hub
 =============
 
-**This project is defunct, see [TrackHubGenerator](https://github.com/Duke-GCB/TrackHubGenerator)
+**This project is defunct, see [TrackHubGenerator](https://github.com/Duke-GCB/TrackHubGenerator).**
 
 Converts annotations in BEDGraph format to [BigWig](https://genome.ucsc.edu/goldenPath/help/bigWig.html) for building a [Track Hub](https://genome.ucsc.edu/goldenPath/help/hubQuickStart.html).
 
